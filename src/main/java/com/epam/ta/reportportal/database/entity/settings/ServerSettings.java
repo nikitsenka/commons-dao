@@ -64,6 +64,8 @@ public class ServerSettings implements Serializable, Modifiable {
 
 	private Map<String, AnalyticsDetails> analyticsDetails;
 
+	private AuthConfig authConfig;
+
 	@LastModifiedDate
 	@FilterCriteria(LAST_MODIFIED)
 	@Field(LAST_MODIFIED)
@@ -90,6 +92,14 @@ public class ServerSettings implements Serializable, Modifiable {
 
 	public void setServerEmailDetails(ServerEmailDetails config) {
 		this.serverEmailDetails = config;
+	}
+
+	public AuthConfig getAuthConfig() {
+		return authConfig;
+	}
+
+	public void setAuthConfig(AuthConfig authConfig) {
+		this.authConfig = authConfig;
 	}
 
 	public ServerEmailDetails getServerEmailDetails() {
