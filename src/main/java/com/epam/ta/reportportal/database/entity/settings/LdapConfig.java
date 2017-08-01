@@ -34,4 +34,51 @@ public class LdapConfig {
 	private PasswordEncoderType passwordEncoderType;
 	private String passwordAttribute;
 
+	public String getServer() {
+		return server;
+	}
+
+	public void setServer(String server) {
+		this.server = server;
+	}
+
+	public String getBaseDn() {
+		return baseDn;
+	}
+
+	public void setBaseDn(String baseDn) {
+		this.baseDn = baseDn;
+	}
+
+	public String getUserDnPattern() {
+		return userDnPattern;
+	}
+
+	public void setUserDnPattern(String userDnPattern) {
+		this.userDnPattern = userDnPattern;
+	}
+
+	public String getGroupSearchBase() {
+		return groupSearchBase;
+	}
+
+	public void setGroupSearchBase(String groupSearchBase) {
+		this.groupSearchBase = groupSearchBase;
+	}
+
+	public PasswordEncoderType getPasswordEncoderType() {
+		return passwordEncoderType;
+	}
+
+	public void setPasswordEncoderType(PasswordEncoderType passwordEncoderType) {
+		this.passwordEncoderType = passwordEncoderType;
+	}
+
+	public String getPasswordAttribute() {
+		return passwordAttribute;
+	}
+
+	public void setPasswordAttribute(String passwordAttribute) {
+		this.passwordAttribute = passwordAttribute;
+	}
 }
