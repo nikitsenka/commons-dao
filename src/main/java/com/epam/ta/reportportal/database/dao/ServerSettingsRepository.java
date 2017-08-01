@@ -22,6 +22,7 @@
 package com.epam.ta.reportportal.database.dao;
 
 import com.epam.ta.reportportal.database.entity.settings.ServerSettings;
+import org.springframework.data.mongodb.repository.Query;
 
 /**
  * 
@@ -31,4 +32,7 @@ import com.epam.ta.reportportal.database.entity.settings.ServerSettings;
  *
  */
 public interface ServerSettingsRepository extends ReportPortalRepository<ServerSettings, String> {
+
+	@Query("{ 'profile' : 'default' }")
+	ServerSettings findDefault();
 }

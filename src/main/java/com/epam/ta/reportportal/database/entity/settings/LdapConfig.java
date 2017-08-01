@@ -30,9 +30,13 @@ public class LdapConfig {
 	private String server;
 	private String baseDn;
 	private String userDnPattern;
+	private String userSearchFilter;
 	private String groupSearchBase;
+	private String groupSearchFilter;
 	private PasswordEncoderType passwordEncoderType;
 	private String passwordAttribute;
+	private String managerDn;
+	private String managerPassword;
 
 	public String getServer() {
 		return server;
@@ -80,5 +84,37 @@ public class LdapConfig {
 
 	public void setPasswordAttribute(String passwordAttribute) {
 		this.passwordAttribute = passwordAttribute;
+	}
+
+	public String getManagerDn() {
+		return managerDn;
+	}
+
+	public void setManagerDn(String managerDn) {
+		this.managerDn = managerDn;
+	}
+
+	public String getManagerPassword() {
+		return managerPassword;
+	}
+
+	public void setManagerPassword(String managerPassword) {
+		this.managerPassword = managerPassword;
+	}
+
+	public String getUserSearchFilter() {
+		return userSearchFilter;
+	}
+
+	public void setUserSearchFilter(String userSearchFilter) {
+		this.userSearchFilter = userSearchFilter;
+	}
+
+	public String getGroupSearchFilter() {
+		return groupSearchFilter;
+	}
+
+	public void setGroupSearchFilter(String groupSearchFilter) {
+		this.groupSearchFilter = groupSearchFilter;
 	}
 }
