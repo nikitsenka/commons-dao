@@ -33,7 +33,7 @@ import java.lang.reflect.Method;
  * @author Andrei Varabyeu
  * 
  */
-class AccessibleMethod {
+public class AccessibleMethod {
 
 	private final Method method;
 	private final Object bean;
