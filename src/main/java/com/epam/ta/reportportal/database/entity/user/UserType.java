@@ -35,7 +35,8 @@ public enum UserType {
     //@formatter:off
     INTERNAL,
     UPSA,
-    GITHUB;
+    GITHUB,
+    LDAP;
 
     //@formatter:on
 
