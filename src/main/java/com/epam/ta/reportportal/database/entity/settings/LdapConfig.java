@@ -35,6 +35,7 @@ public class LdapConfig {
 	private String groupSearchFilter;
 	private PasswordEncoderType passwordEncoderType;
 	private String passwordAttribute;
+	private String emailAttribute;
 	private String managerDn;
 	private String managerPassword;
 
@@ -116,5 +117,13 @@ public class LdapConfig {
 
 	public void setGroupSearchFilter(String groupSearchFilter) {
 		this.groupSearchFilter = groupSearchFilter;
+	}
+
+	public String getEmailAttribute() {
+		return emailAttribute;
+	}
+
+	public void setEmailAttribute(String emailAttribute) {
+		this.emailAttribute = emailAttribute;
 	}
 }
