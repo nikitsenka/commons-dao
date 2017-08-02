@@ -27,6 +27,7 @@ package com.epam.ta.reportportal.database.entity.settings;
  */
 public class LdapConfig {
 
+	private Boolean enabled;
 	private String server;
 	private String baseDn;
 	private String userDnPattern;
@@ -38,6 +39,14 @@ public class LdapConfig {
 	private String emailAttribute;
 	private String managerDn;
 	private String managerPassword;
+
+	public Boolean getEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
+	}
 
 	public String getServer() {
 		return server;
