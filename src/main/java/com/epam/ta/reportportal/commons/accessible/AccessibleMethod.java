@@ -21,8 +21,6 @@
 
 package com.epam.ta.reportportal.commons.accessible;
 
-import com.google.common.base.Throwables;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -43,7 +41,7 @@ public class AccessibleMethod {
 		this.method = method;
 	}
 
-	public Object invoke(Object... args) {
+	public Object invoke(Object... args) throws Throwable {
 		try {
 			return invoke(this.bean, this.method, args);
 		} catch (IllegalAccessException accessException) { //NOSONAR
@@ -57,14 +55,13 @@ public class AccessibleMethod {
 
 	}
 
-	private Object invoke(Object bean, Method m, Object... args) throws IllegalAccessException {
+	private Object invoke(Object bean, Method m, Object... args) throws Throwable {
 		try {
 			return m.invoke(bean, args);
 		} catch (IllegalArgumentException e) {
 			throw new RuntimeException(e);
 		} catch (InvocationTargetException e) {
-			Throwables.throwIfUnchecked(e);
-			throw new RuntimeException(e);
+			throw e.getTargetException();
 		}
 
 	}
