@@ -46,6 +46,7 @@ import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
+import org.springframework.data.mongodb.core.WriteResultChecking;
 import org.springframework.data.mongodb.core.convert.CustomConversions;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
@@ -80,7 +81,7 @@ public class MongodbConfiguration {
 	MongoDbFactory mongoDbFactory() throws UnknownHostException {
 
 		SimpleMongoDbFactory mongoDbFactory = new SimpleMongoDbFactory(mongo(), mongoProperties.getDatabase());
-		mongoDbFactory.setWriteConcern(WriteConcern.ACKNOWLEDGED);
+		mongoDbFactory.setWriteConcern(WriteConcern.JOURNALED);
 
 		return mongoDbFactory;
 	}
@@ -101,8 +102,8 @@ public class MongodbConfiguration {
 	@Bean
 	MongoTemplate mongoTemplate() throws UnknownHostException {
 		MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory(), mappingMongoConverter());
-		mongoTemplate.setWriteConcern(WriteConcern.ACKNOWLEDGED);
-
+		mongoTemplate.setWriteConcern(WriteConcern.JOURNALED);
+		mongoTemplate.setWriteResultChecking(WriteResultChecking.EXCEPTION);
 		return mongoTemplate;
 	}
 
