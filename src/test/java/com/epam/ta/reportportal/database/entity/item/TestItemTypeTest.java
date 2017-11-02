@@ -24,6 +24,15 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.Objects;
+
+import static org.hamcrest.CoreMatchers.nullValue;
+
 /**
  * @author Andrei Varabyeu
  */
@@ -53,5 +62,25 @@ public class TestItemTypeTest {
 	public void checkLowerThan() {
 		Assert.assertThat(ERROR_MESSAGE, TestItemType.TEST.lowerThan(TestItemType.SUITE), CoreMatchers.is(true));
 		Assert.assertThat(ERROR_MESSAGE, TestItemType.STEP.lowerThan(TestItemType.TEST), CoreMatchers.is(true));
+	}
+
+	@Test
+	public void checkNullable() throws IntrospectionException {
+		TestItem item = TestItem.nullable();
+
+		Arrays.stream(Introspector.getBeanInfo(TestItem.class).getPropertyDescriptors())
+				.filter(pd -> Objects.nonNull(pd.getReadMethod()))
+				.filter(pd -> !"getClass".equals(pd.getReadMethod().getName()))
+				.map(PropertyDescriptor::getReadMethod)
+				.forEach(m -> {
+					try {
+						Object obj = m.invoke(item);
+						Assert.assertThat("Method " + m.getName() + " does not return null", obj, nullValue());
+
+					} catch (IllegalAccessException | InvocationTargetException e) {
+						Assert.fail("Cannot invoke method");
+					}
+				});
+
 	}
 }
