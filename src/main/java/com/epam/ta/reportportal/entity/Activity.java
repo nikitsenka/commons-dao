@@ -103,6 +103,19 @@ public class Activity {
 
 	public enum Entity {
 		LAUNCH,
-		ITEM
+		ITEM,
+		DASHBOARD,
+		DEFECT_TYPE,
+		EMAIL_CONFIG,
+		EXTERNAL_SYSTEM,
+		FILTER,
+		IMPORT,
+		INTEGRATION,
+		ITEM_ISSUE,
+		PROJECT,
+		SHARING,
+		TICKET,
+		USER,
+		WIDGET
 	}
 }
