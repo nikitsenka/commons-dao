@@ -98,6 +98,8 @@ ON execution_statistics;
 DROP TRIGGER IF EXISTS delete_issue_statistics
 ON issue_statistics;
 
+DROP FUNCTION IF EXISTS has_child(ltree);
+DROP FUNCTION IF EXISTS merge_launch(bigint);
 DROP EXTENSION IF EXISTS tablefunc;
 DROP EXTENSION IF EXISTS ltree;
 DROP FUNCTION IF EXISTS get_last_launch_number();
