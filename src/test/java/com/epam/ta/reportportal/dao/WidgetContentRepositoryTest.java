@@ -6,7 +6,6 @@ import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.config.util.SqlRunner;
 import com.epam.ta.reportportal.entity.Activity;
-import com.epam.ta.reportportal.entity.bts.Ticket;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
@@ -281,9 +280,9 @@ public class WidgetContentRepositoryTest {
 	@Test
 	public void uniqueBugStatistics() {
 
-		Filter filter = buildDefaultUniqueBugFilter(1L);
+		Filter filter = buildDefaultFilter(1L);
 
-		Map<String, List<UniqueBugContent>> uniqueBugStatistics = widgetContentRepository.uniqueBugStatistics(filter, 3);
+		Map<String, List<UniqueBugContent>> uniqueBugStatistics = widgetContentRepository.uniqueBugStatistics(filter, false, 100);
 
 		Assert.assertNotNull(uniqueBugStatistics);
 
@@ -294,7 +293,7 @@ public class WidgetContentRepositoryTest {
 
 		Filter filter = buildDefaultFilter(1L);
 
-		List<FlakyCasesTableContent> flakyCasesStatistics = widgetContentRepository.flakyCasesStatistics(filter, 1);
+		List<FlakyCasesTableContent> flakyCasesStatistics = widgetContentRepository.flakyCasesStatistics(filter, 100);
 
 		Assert.assertNotNull(flakyCasesStatistics);
 	}
@@ -417,15 +416,6 @@ public class WidgetContentRepositoryTest {
 				"project_id"
 		));
 		return new Filter(1L, Activity.class, conditionSet);
-	}
-
-	private Filter buildDefaultUniqueBugFilter(Long projectId) {
-		Set<FilterCondition> conditionSet = Sets.newHashSet(new FilterCondition(Condition.EQUALS,
-				false,
-				String.valueOf(projectId),
-				"project_id"
-		));
-		return new Filter(1L, Ticket.class, conditionSet);
 	}
 
 	private Filter buildMostTimeConsumingFilter(Long projectId) {

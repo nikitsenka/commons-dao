@@ -4,7 +4,6 @@ import com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstan
 import com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant;
 import com.epam.ta.reportportal.dao.PostgresCrosstabWrapper;
 import com.epam.ta.reportportal.entity.Activity;
-import com.epam.ta.reportportal.entity.bts.Ticket;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
@@ -28,9 +27,11 @@ import java.util.Optional;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.ACTION;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.LOGIN;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.*;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.*;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
+import static com.epam.ta.reportportal.jooq.Tables.ISSUE_GROUP;
+import static com.epam.ta.reportportal.jooq.Tables.ISSUE_TYPE;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.max;
 
@@ -38,8 +39,8 @@ public enum FilterTarget {
 
 	LAUNCH(Launch.class, Arrays.asList(
 			//@formatter:off
-			new CriteriaHolder(ID, "l.id", Long.class, false),
-			new CriteriaHolder(DESCRIPTION, "l.description", String.class, false),
+			new CriteriaHolder(ID, "launch.id", Long.class, false),
+			new CriteriaHolder(DESCRIPTION, "launch.description", String.class, false),
 			new CriteriaHolder(PROJECT_ID, "project_id", Long.class, false),
 			new CriteriaHolder(STATUS, "status", JStatusEnum.class, false),
 			new CriteriaHolder(MODE, "mode", JLaunchModeEnum.class, false),
@@ -50,8 +51,7 @@ public enum FilterTarget {
 			JLaunch l = JLaunch.LAUNCH;
 			JStatistics s = JStatistics.STATISTICS;
 
-			Select<?> fieldsForSelect = DSL.select(
-					l.ID,
+			Select<?> fieldsForSelect = DSL.select(l.ID,
 					l.UUID,
 					l.PROJECT_ID,
 					l.USER_ID,
@@ -65,13 +65,28 @@ public enum FilterTarget {
 					l.STATUS
 			);
 
+			Select<?> crossTabValues = DSL.select(DSL.concat(DSL.val("statistics$defects$"),
+					DSL.lower(ISSUE_GROUP.ISSUE_GROUP_.cast(String.class)),
+					DSL.val("$"),
+					ISSUE_TYPE.LOCATOR
+			))
+					.from(ISSUE_GROUP)
+					.join(ISSUE_TYPE)
+					.on(ISSUE_GROUP.ISSUE_GROUP_ID.eq(ISSUE_TYPE.ISSUE_GROUP_ID))
+					.unionAll(DSL.select(DSL.concat(DSL.val("statistics$defects$"),
+							DSL.lower(ISSUE_GROUP.ISSUE_GROUP_.cast(String.class)),
+							DSL.val("$total")
+					))
+							.from(ISSUE_GROUP))
+					.unionAll(DSL.select(DSL.val(EXECUTIONS_TOTAL)))
+					.unionAll(DSL.select(DSL.val(EXECUTIONS_PASSED)))
+					.unionAll(DSL.select(DSL.val(EXECUTIONS_SKIPPED)))
+					.unionAll(DSL.select(DSL.val(EXECUTIONS_FAILED)));
+
 			Select<?> raw = DSL.select(s.LAUNCH_ID, s.S_FIELD, max(s.S_COUNTER))
 					.from(s)
 					.groupBy(s.LAUNCH_ID, s.S_FIELD)
 					.orderBy(s.LAUNCH_ID, s.S_FIELD);
-
-			Select<?> crossTabValues = DSL.selectDistinct(s.S_FIELD) //these are is known to be distinct
-					.from(s).orderBy(s.S_FIELD);
 
 			return getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues)
 					.rightJoin(l)
@@ -80,8 +95,7 @@ public enum FilterTarget {
 		}
 	},
 
-	ACTIVITY(Activity.class, Arrays.asList(
-			new CriteriaHolder(ID, "a.id", Long.class, false),
+	ACTIVITY(Activity.class, Arrays.asList(new CriteriaHolder(ID, "a.id", Long.class, false),
 			new CriteriaHolder(PROJECT_ID, "a.project_id", Long.class, false),
 			new CriteriaHolder(LOGIN, "u.login", String.class, false),
 			new CriteriaHolder(ACTION, "a.action", String.class, false)
@@ -102,8 +116,7 @@ public enum FilterTarget {
 		}
 	},
 
-	TEST_ITEM(TestItem.class, Arrays.asList(
-			new CriteriaHolder(PROJECT_ID, "l.project_id", Long.class, false),
+	TEST_ITEM(TestItem.class, Arrays.asList(new CriteriaHolder(PROJECT_ID, "l.project_id", Long.class, false),
 			new CriteriaHolder("type", "ti.type", JTestItemTypeEnum.class, false),
 			new CriteriaHolder(LAUNCH_ID, "tis.launch_id", Long.class, false),
 			new CriteriaHolder(STATUS, "l.status", JStatusEnum.class, false),
@@ -124,49 +137,6 @@ public enum FilterTarget {
 					.on(l.ID.eq(tis.LAUNCH_ID))
 					.join(tir)
 					.on(tir.RESULT_ID.eq(ti.ITEM_ID))
-					.getQuery();
-		}
-	},
-
-	TICKET(Ticket.class, Arrays.asList(
-			new CriteriaHolder(NAME, "ti.name", String.class, false),
-			new CriteriaHolder(PROJECT_ID, JLaunch.LAUNCH.PROJECT_ID.getQualifiedName().toString(), Long.class, false)
-	)) {
-		@Override
-		public SelectQuery<? extends Record> getQuery() {
-
-			JTestItem ti = JTestItem.TEST_ITEM.as("ti");
-			JTestItemResults tir = JTestItemResults.TEST_ITEM_RESULTS.as("tir");
-			JStatistics s = JStatistics.STATISTICS.as("s");
-			JTicket tic = JTicket.TICKET;
-			JUsers u = JUsers.USERS;
-			JIssueTicket it = JIssueTicket.ISSUE_TICKET;
-			JIssue i = JIssue.ISSUE;
-			JLaunch l = JLaunch.LAUNCH;
-
-			Select<?> fieldsForSelect = DSL.select(tic.TICKET_ID, tic.SUBMIT_DATE, tic.URL, ti.NAME, u.LOGIN);
-
-			Select<?> raw = DSL.select(s.ITEM_ID, s.S_FIELD, max(s.S_COUNTER))
-					.from(s)
-					.groupBy(s.ITEM_ID, s.S_FIELD)
-					.orderBy(s.ITEM_ID, s.S_FIELD);
-			Select<?> crossTabValues = DSL.selectDistinct(s.S_FIELD).from(s).orderBy(s.S_FIELD);
-
-			return getPostgresWrapper().pivot(fieldsForSelect, raw, crossTabValues)
-					.join(ti)
-					.on(field(DSL.name("ct", "item_id")).eq(ti.ITEM_ID))
-					.join(tir)
-					.on(ti.ITEM_ID.eq(tir.RESULT_ID))
-					.join(l)
-					.on(ti.LAUNCH_ID.eq(l.ID))
-					.leftJoin(i)
-					.on(tir.RESULT_ID.eq(i.ISSUE_ID))
-					.leftJoin(it)
-					.on(i.ISSUE_ID.eq(it.ISSUE_ID))
-					.join(tic)
-					.on(it.TICKET_ID.eq(tic.ID))
-					.join(u)
-					.on(tic.SUBMITTER_ID.eq(u.ID))
 					.getQuery();
 		}
 	},
@@ -210,8 +180,7 @@ public enum FilterTarget {
 			JLog l = JLog.LOG.as("l");
 			JTestItem ti = JTestItem.TEST_ITEM.as("ti");
 
-			return DSL.select(
-					l.ID,
+			return DSL.select(l.ID,
 					l.LOG_TIME,
 					l.LOG_MESSAGE,
 					l.LAST_MODIFIED,
