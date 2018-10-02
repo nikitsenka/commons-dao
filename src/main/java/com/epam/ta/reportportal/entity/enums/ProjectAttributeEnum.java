@@ -17,6 +17,7 @@ public enum ProjectAttributeEnum {
     NUMBER_OF_LOG_LINES("numberOfLogLines"),
     INDEXING_RUNNING("indexingRunning"),
     AUTO_ANALYZER_ENABLED("isAutoAnalyzerEnabled"),
+    ANALYZE_MODE("analyzeMode"),
     EMAIL_ENABLED("emailEnabled"),
     EMAIL_FROM("emailFrom");
 
