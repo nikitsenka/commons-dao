@@ -2,8 +2,9 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
-import com.epam.ta.reportportal.dao.util.JsonbConverter;
 import com.epam.ta.reportportal.entity.Activity;
+import com.epam.ta.reportportal.entity.JsonbObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.jooq.DSLContext;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,7 +30,10 @@ import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 @Repository
 public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
 
-	private static final RecordMapper<? super Record, Activity> ACTIVITY_MAPPER = r -> {
+	@Autowired
+	private ObjectMapper objectMapper;
+
+	private final RecordMapper<? super Record, Activity> ACTIVITY_MAPPER = r -> {
 		Activity activity = new Activity();
 
 		activity.setId(r.get(ACTIVITY.ID));
@@ -37,12 +42,19 @@ public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
 		activity.setUserId(r.get(ACTIVITY.USER_ID));
 		activity.setProjectId(r.get(ACTIVITY.PROJECT_ID));
 		activity.setCreatedAt(r.get(ACTIVITY.CREATION_DATE, LocalDateTime.class));
-		activity.setDetails(r.get(ACTIVITY.DETAILS, new JsonbConverter()));
+		String s = r.get(ACTIVITY.DETAILS, String.class);
+		JsonbObject details = null;
+		try {
+			details = objectMapper.readValue(s, JsonbObject.class);
+		} catch (IOException ignored) {
+		}
+
+		activity.setDetails(details);
 
 		return activity;
 	};
 
-	private static final Function<Result<? extends Record>, List<Activity>> ACTIVITIES_FETCHER = r -> {
+	private final Function<Result<? extends Record>, List<Activity>> ACTIVITIES_FETCHER = r -> {
 		Map<Long, Activity> activityMap = Maps.newHashMap();
 		r.forEach(res -> {
 			Long activityId = res.get(ACTIVITY.ID);
