@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Activity table entity
@@ -117,5 +118,30 @@ public class Activity {
 		TICKET,
 		USER,
 		WIDGET
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		Activity activity = (Activity) o;
+		return Objects.equals(id, activity.id) && Objects.equals(userId, activity.userId) && Objects.equals(projectId, activity.projectId)
+				&& entity == activity.entity && Objects.equals(action, activity.action) && Objects.equals(details, activity.details)
+				&& Objects.equals(createdAt, activity.createdAt);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, userId, projectId, entity, action, details, createdAt);
+	}
+
+	@Override
+	public String toString() {
+		return "Activity{" + "id=" + id + ", userId=" + userId + ", projectId=" + projectId + ", entity=" + entity + ", action='" + action
+				+ '\'' + ", details=" + details + ", createdAt=" + createdAt + '}';
 	}
 }
