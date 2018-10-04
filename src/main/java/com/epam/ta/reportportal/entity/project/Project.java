@@ -1,12 +1,12 @@
 package com.epam.ta.reportportal.entity.project;
 
-import com.epam.ta.reportportal.commons.JsonbUserType;
+import com.epam.ta.reportportal.commons.JsonbMetaDataType;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
-import com.epam.ta.reportportal.entity.meta.MetaData;
 import com.epam.ta.reportportal.entity.project.email.EmailSenderCase;
-import com.epam.ta.reportportal.entity.user.User;
-import com.fasterxml.jackson.annotation.*;
+import com.epam.ta.reportportal.entity.user.ProjectUser;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Sets;
@@ -17,13 +17,16 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * @author Ivan Budayeu
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@TypeDef(name = "jsonb", typeClass = JsonbUserType.class)
+@TypeDef(name = "JsonbMetaDataType", typeClass = JsonbMetaDataType.class)
 @Table(name = "project", schema = "public")
 public class Project implements Serializable {
 
@@ -46,15 +49,11 @@ public class Project implements Serializable {
 
 	@Transient
 	@JsonSerialize
-	private ProjectConfiguration configuration;
+	private Map<String, String> configuration;
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
 	private Set<ProjectAttribute> projectAttributes;
-
-	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
-	@JsonBackReference
-	private List<UserConfig> users;
 
 	@OneToMany(mappedBy = "project")
 	@JsonBackReference
@@ -63,9 +62,9 @@ public class Project implements Serializable {
 	@Column(name = "creation_date")
 	private Date creationDate;
 
-	@Type(type = "jsonb")
+	@Type(type = "JsonbMetaDataType")
 	@Column(name = "metadata")
-	private MetaData metadata;
+	private Map<String, String> metadata;
 
 	@ManyToMany(cascade = { CascadeType.ALL })
 	@JoinTable(name = "issue_type_project", joinColumns = { @JoinColumn(name = "project_id") }, inverseJoinColumns = {
@@ -75,6 +74,9 @@ public class Project implements Serializable {
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<EmailSenderCase> emailCases;
 
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.ALL)
+	@JsonBackReference
+	private Set<ProjectUser> users;
 
 	public Project(Long id, String name) {
 		this.id = id;
@@ -108,15 +110,12 @@ public class Project implements Serializable {
 		this.addInfo = addInfo;
 	}
 
-	public void setUsers(List<UserConfig> users) {
-		this.users = users;
+	public Set<ProjectUser> getUsers() {
+		return users;
 	}
 
-	/*
-	 * Null-safe getter
-	 */
-	public List<UserConfig> getUsers() {
-		return users == null ? users = Collections.emptyList() : users;
+	public void setUsers(Set<ProjectUser> users) {
+		this.users = users;
 	}
 
 	public String getName() {
@@ -164,14 +163,15 @@ public class Project implements Serializable {
 	 *
 	 * @return the configuration
 	 */
-	public ProjectConfiguration getConfiguration() {
-		return new ProjectConfiguration(this.projectAttributes);
+	public Map<String, String> getConfiguration() {
+		return ofNullable(projectAttributes).map(attributes -> attributes.stream()
+				.collect(Collectors.toMap(pa -> pa.getAttribute().getName(), ProjectAttribute::getValue))).orElseGet(Collections::emptyMap);
 	}
 
 	/**
 	 * @param configuration the configuration to set
 	 */
-	public void setConfiguration(ProjectConfiguration configuration) {
+	public void setConfiguration(Map<String, String> configuration) {
 		this.configuration = configuration;
 	}
 
@@ -188,11 +188,11 @@ public class Project implements Serializable {
 		this.demoDataPostfix = demoDataPostfix;
 	}
 
-	public MetaData getMetadata() {
+	public Map<String, String> getMetadata() {
 		return metadata;
 	}
 
-	public void setMetadata(MetaData metadata) {
+	public void setMetadata(Map<String, String> metadata) {
 		this.metadata = metadata;
 	}
 
@@ -208,107 +208,14 @@ public class Project implements Serializable {
 		return Objects.equals(name, project.name) && Objects.equals(addInfo, project.addInfo) && Objects.equals(configuration,
 				project.configuration
 		) && Objects.equals(users, project.users) && Objects.equals(creationDate, project.creationDate) && Objects.equals(
-				metadata, project.metadata);
+				metadata,
+				project.metadata
+		);
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(name, addInfo, configuration, users, creationDate);
-	}
-
-	@Entity
-	@Table(name = "user_config")
-	public static class UserConfig implements Serializable {
-
-		private static final long serialVersionUID = 1L;
-
-		@Id
-		@GeneratedValue(strategy = GenerationType.IDENTITY)
-		private Long id;
-
-		@ManyToOne(cascade = CascadeType.ALL)
-		@JoinColumn(name = "user_id")
-		private User user;
-
-		@ManyToOne(cascade = CascadeType.ALL)
-		@JoinColumn(name = "project_id")
-		@JsonManagedReference
-		private Project project;
-
-		private ProjectRole proposedRole;
-		private ProjectRole projectRole;
-
-		public static UserConfig newOne() {
-			return new UserConfig();
-		}
-
-		public UserConfig() {
-
-		}
-
-		public Long getId() {
-			return id;
-		}
-
-		public void setId(Long id) {
-			this.id = id;
-		}
-
-		public User getUser() {
-			return user;
-		}
-
-		public void setUser(User user) {
-			this.user = user;
-		}
-
-		public void setProjectRole(ProjectRole projectRole) {
-			this.projectRole = projectRole;
-		}
-
-		public void setProposedRole(ProjectRole proposedRole) {
-			this.proposedRole = proposedRole;
-		}
-
-		public ProjectRole getProjectRole() {
-			return projectRole;
-		}
-
-		public ProjectRole getProposedRole() {
-			return proposedRole;
-		}
-
-		public Project getProject() {
-			return project;
-		}
-
-		public void setProject(Project project) {
-			this.project = project;
-		}
-
-		public UserConfig withProposedRole(ProjectRole proposedRole) {
-			this.proposedRole = proposedRole;
-			return this;
-		}
-
-		public UserConfig withProjectRole(ProjectRole projectRole) {
-			this.projectRole = projectRole;
-			return this;
-		}
-
-		public UserConfig withUser(User user) {
-			this.user = user;
-			return this;
-		}
-
-		@Override
-		public String toString() {
-			return MoreObjects.toStringHelper(this)
-					.add("user login", user.getLogin())
-					.add("proposedRole", proposedRole)
-					.add("projectRole", projectRole)
-					.toString();
-		}
 	}
 
 	@Override

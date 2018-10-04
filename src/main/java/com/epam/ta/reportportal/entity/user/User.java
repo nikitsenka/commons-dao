@@ -1,16 +1,14 @@
 package com.epam.ta.reportportal.entity.user;
 
-import com.epam.ta.reportportal.commons.JsonbUserType;
-import com.epam.ta.reportportal.entity.meta.MetaData;
+import com.epam.ta.reportportal.commons.JsonbMetaDataType;
 import com.epam.ta.reportportal.entity.project.Project;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -19,7 +17,7 @@ import java.util.Set;
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@TypeDef(name = "jsonb", typeClass = JsonbUserType.class)
+@TypeDef(name = "JsonbMetaDataType", typeClass = JsonbMetaDataType.class)
 @Table(name = "users", schema = "public")
 public class User implements Serializable {
 
@@ -53,9 +51,9 @@ public class User implements Serializable {
 	@Column(name = "expired")
 	private boolean isExpired;
 
-	@Type(type = "jsonb")
+	@Type(type = "JsonbMetaDataType")
 	@Column(name = "metadata")
-	private MetaData metadata;
+	private Map<String,String> metadata;
 
 	@Column(name = "attachment")
 	private String attachment;
@@ -66,8 +64,7 @@ public class User implements Serializable {
 	@Column(name = "type")
 	private UserType userType;
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "project")
-	@Fetch(value = FetchMode.JOIN)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
 	private Set<ProjectUser> projects;
 
 	public User() {
@@ -169,11 +166,11 @@ public class User implements Serializable {
 		this.userType = userType;
 	}
 
-	public MetaData getMetadata() {
+	public Map<String, String> getMetadata() {
 		return metadata;
 	}
 
-	public void setMetadata(MetaData metadata) {
+	public void setMetadata(Map<String, String> metadata) {
 		this.metadata = metadata;
 	}
 
