@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -41,7 +42,7 @@ public class Activity {
 
 	@Column(name = "details")
 	@Type(type = "jsonb")
-	private JsonbObject details;
+	private Map<Object, Object> details;
 
 	@Column(name = "creation_date")
 	private LocalDateTime createdAt;
@@ -86,11 +87,11 @@ public class Activity {
 		this.action = action;
 	}
 
-	public JsonbObject getDetails() {
+	public Map<Object, Object> getDetails() {
 		return details;
 	}
 
-	public void setDetails(JsonbObject details) {
+	public void setDetails(Map<Object, Object> details) {
 		this.details = details;
 	}
 

@@ -8,7 +8,7 @@ import org.springframework.data.domain.Sort;
 import java.time.Duration;
 import java.util.List;
 
-public interface ActivityRepositoryCustom {
+public interface ActivityRepositoryCustom extends FilterableRepository<Activity> {
 
 	/**
 	 * Find activities for specified test item
