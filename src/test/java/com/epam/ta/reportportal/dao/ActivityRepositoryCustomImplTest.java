@@ -6,6 +6,7 @@ import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.ActivityDetails;
+import com.epam.ta.reportportal.entity.HistoryField;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,6 +53,37 @@ public class ActivityRepositoryCustomImplTest {
 		assertNotNull(activities.get(0));
 	}
 
+	@Test
+	public void findByProjectIdTest() {
+		List<Activity> activities = repository.findActivitiesByProjectId(1L, defaultFilter(), PageRequest.of(0, 10));
+		assertEquals(3, activities.size());
+		activities.forEach(a -> assertEquals(Long.valueOf(1L), a.getProjectId()));
+	}
+
+	@Rollback(false)
+	@Test
+	public void test() {
+		Activity activity = new Activity();
+		activity.setProjectId(2L);
+		activity.setUserId(2L);
+		activity.setEntity(Activity.Entity.FILTER);
+		activity.setAction("filter_updated");
+		activity.setCreatedAt(LocalDateTime.now());
+
+		ActivityDetails details = new ActivityDetails();
+		details.setObjectId(1L);
+		details.setObjectName("filter new test");
+
+		ArrayList<HistoryField> objects = Lists.newArrayList();
+
+		objects.add(new HistoryField("name", "filter test", "filter new test"));
+		objects.add(new HistoryField("description", "old", "new"));
+		details.setHistory(objects);
+
+		activity.setDetails(details);
+		repository.save(activity);
+	}
+
 	private Filter filterGetById(long id) {
 		return Filter.builder()
 				.withCondition(new FilterCondition(Condition.EQUALS, false, String.valueOf(id), "id"))
@@ -59,25 +91,14 @@ public class ActivityRepositoryCustomImplTest {
 				.build();
 	}
 
-	@Rollback(false)
-	@Test
-	public void test() {
-		Activity activity = new Activity();
-		activity.setProjectId(1L);
-		activity.setUserId(1L);
-		activity.setEntity(Activity.Entity.WIDGET);
-		activity.setAction("widget_create");
-		activity.setCreatedAt(LocalDateTime.now());
-
-		ActivityDetails details = new ActivityDetails();
-		details.setObjectId(1L);
-		details.setObjectName("widget test");
-
-/*		ArrayList<HistoryField> objects = Lists.newArrayList();
-
-		objects.add(new HistoryField("field", "old", "new"));*//*
-		details.setHistory(objects);*/
-		activity.setDetails(details);
-		repository.save(activity);
+	private Filter defaultFilter() {
+		return Filter.builder()
+				.withCondition(FilterCondition.builder()
+						.withCondition(Condition.LOWER_THAN)
+						.withSearchCriteria("id")
+						.withValue("100")
+						.build())
+				.withTarget(Activity.class)
+				.build();
 	}
 }

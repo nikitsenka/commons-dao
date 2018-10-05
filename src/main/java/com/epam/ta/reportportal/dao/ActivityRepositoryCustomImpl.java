@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
+import static java.util.Optional.ofNullable;
 
 public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
 
@@ -53,14 +54,15 @@ public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
 		activity.setCreatedAt(r.get(ACTIVITY.CREATION_DATE, LocalDateTime.class));
 
 		String detailsJson = r.get(ACTIVITY.DETAILS, String.class);
-		JsonbObject details;
-		try {
-			details = objectMapper.readValue(detailsJson, JsonbObject.class);
-		} catch (IOException e) {
-			throw new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR);
-		}
+		ofNullable(detailsJson).ifPresent(s -> {
+			try {
+				JsonbObject details = objectMapper.readValue(s, JsonbObject.class);
+				activity.setDetails(details);
+			} catch (IOException e) {
+				throw new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR);
+			}
+		});
 
-		activity.setDetails(details);
 		return activity;
 	};
 
@@ -86,7 +88,11 @@ public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
 
 	@Override
 	public List<Activity> findActivitiesByProjectId(Long projectId, Filter filter, Pageable pageable) {
-		FilterCondition projectIdCondition = new FilterCondition(Condition.EQUALS, false, projectId.toString(), "project_id");
+		FilterCondition projectIdCondition = FilterCondition.builder()
+				.withCondition(Condition.EQUALS)
+				.withSearchCriteria("project_id")
+				.withValue(projectId.toString())
+				.build();
 		return ACTIVITY_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter.withCondition(projectIdCondition)).with(pageable).build()));
 	}
 
