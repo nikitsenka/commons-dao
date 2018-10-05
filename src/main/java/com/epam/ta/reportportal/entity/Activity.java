@@ -31,6 +31,7 @@ public class Activity {
 	@Column(name = "project_id", nullable = false)
 	private Long projectId;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "entity", unique = true, nullable = false)
 	@Type(type = "pqsql_enum")
 	private Entity entity;
@@ -103,6 +104,19 @@ public class Activity {
 
 	public enum Entity {
 		LAUNCH,
-		ITEM
+		ITEM,
+		DASHBOARD,
+		DEFECT_TYPE,
+		EMAIL_CONFIG,
+		EXTERNAL_SYSTEM,
+		FILTER,
+		IMPORT,
+		INTEGRATION,
+		ITEM_ISSUE,
+		PROJECT,
+		SHARING,
+		TICKET,
+		USER,
+		WIDGET
 	}
 }
