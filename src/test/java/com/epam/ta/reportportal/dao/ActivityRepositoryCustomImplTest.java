@@ -80,7 +80,10 @@ public class ActivityRepositoryCustomImplTest {
 
 	@Test
 	public void findActivitiesByTestItemIdTest() {
+		List<Activity> activities = repository.findActivitiesByTestItemId(1L, defaultFilter(), PageRequest.of(0, 10));
 
+		assertEquals(4, activities.size());
+		activities.forEach(a -> assertEquals(1L, (long) a.getObjectId()));
 	}
 
 	private Filter filterGetById(long id) {

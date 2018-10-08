@@ -10,7 +10,6 @@ import com.google.common.collect.Maps;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
-import org.jooq.SelectQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +30,7 @@ public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
 
 	private static final String PROJECT_ID_COLUMN = "project_id";
 	private static final String CREATION_DATE_COLUMN = "creation_date";
+	private static final String OBJECT_ID_COLUMN = "object_id";
 
 	private DSLContext dsl;
 
@@ -54,11 +54,12 @@ public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
 	@Override
 	public List<Activity> findActivitiesByTestItemId(Long testItemId, Filter filter, Pageable pageable) {
 		Sort sort = new Sort(Sort.Direction.DESC, CREATION_DATE_COLUMN);
-		SelectQuery<? extends Record> query = QueryBuilder.newBuilder(filter).with(sort).with(pageable).build();
-		String qqq = query.getSQL();
-		int pos = qqq.indexOf("order by");
-		String sql = qqq.substring(0, pos) + "and details @> '{\"objectId\" : 1}' " + qqq.substring(pos);
-		return null;
+		FilterCondition testItemIdCondition = FilterCondition.builder()
+				.withCondition(Condition.EQUALS)
+				.withSearchCriteria(OBJECT_ID_COLUMN)
+				.withValue(testItemId.toString())
+				.build();
+		return ACTIVITY_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter.withCondition(testItemIdCondition)).with(sort).build()));
 	}
 
 	@Override

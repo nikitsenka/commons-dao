@@ -46,6 +46,9 @@ public class Activity {
 	@Column(name = "creation_date")
 	private LocalDateTime createdAt;
 
+	@Column(name = "object_id")
+	private Long objectId;
+
 	public Long getId() {
 		return id;
 	}
@@ -100,6 +103,14 @@ public class Activity {
 
 	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
+	}
+
+	public Long getObjectId() {
+		return objectId;
+	}
+
+	public void setObjectId(Long objectId) {
+		this.objectId = objectId;
 	}
 
 	public enum Entity {
