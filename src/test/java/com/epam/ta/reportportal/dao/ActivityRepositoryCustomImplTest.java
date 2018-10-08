@@ -4,8 +4,6 @@ import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.entity.Activity;
-import com.epam.ta.reportportal.entity.ActivityDetails;
-import com.epam.ta.reportportal.entity.HistoryField;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -84,30 +81,6 @@ public class ActivityRepositoryCustomImplTest {
 	@Test
 	public void findActivitiesByTestItemIdTest() {
 
-	}
-
-	@Rollback(false)
-	@Test
-	public void test() {
-		Activity activity = new Activity();
-		activity.setProjectId(2L);
-		activity.setUserId(2L);
-		activity.setEntity(Activity.Entity.FILTER);
-		activity.setAction("filter_updated");
-		activity.setCreatedAt(LocalDateTime.now());
-
-		ActivityDetails details = new ActivityDetails();
-		details.setObjectId(1L);
-		details.setObjectName("filter new test");
-
-		ArrayList<HistoryField> objects = Lists.newArrayList();
-
-		objects.add(new HistoryField("name", "filter test", "filter new test"));
-		objects.add(new HistoryField("description", "old", "new"));
-		details.setHistory(objects);
-
-		activity.setDetails(details);
-		repository.save(activity);
 	}
 
 	private Filter filterGetById(long id) {
