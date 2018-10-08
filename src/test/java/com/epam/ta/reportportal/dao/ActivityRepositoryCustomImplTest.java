@@ -81,6 +81,11 @@ public class ActivityRepositoryCustomImplTest {
 		activities.forEach(a -> assertTrue(a.getCreatedAt().toLocalDate().isEqual(LocalDate.of(2018, 10, 5))));
 	}
 
+	@Test
+	public void findActivitiesByTestItemIdTest() {
+
+	}
+
 	@Rollback(false)
 	@Test
 	public void test() {

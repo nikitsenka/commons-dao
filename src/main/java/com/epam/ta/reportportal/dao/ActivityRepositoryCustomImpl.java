@@ -79,13 +79,10 @@ public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
 	@Override
 	public List<Activity> findActivitiesByTestItemId(Long testItemId, Filter filter, Pageable pageable) {
 		Sort sort = new Sort(Sort.Direction.DESC, "creation_date");
-		//		FilterCondition testItemIdCondition = FilterCondition.builder().eq("").build()
-
-		SelectQuery<? extends Record> build = QueryBuilder.newBuilder(filter).with(sort).with(pageable).build();
-		build.addConditions();
-		build.getSQL().concat("")
-
-
+		SelectQuery<? extends Record> query = QueryBuilder.newBuilder(filter).with(sort).with(pageable).build();
+		String qqq = query.getSQL();
+		int pos = qqq.indexOf("order by");
+		String sql = qqq.substring(0, pos) + "and details @> '{\"objectId\" : 1}' " + qqq.substring(pos);
 		return null;
 	}
 
