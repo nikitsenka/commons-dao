@@ -54,7 +54,7 @@ dependencies {
         compile 'com.epam.reportportal:commons:3.1.0'
         compile 'com.epam.reportportal:commons-rules:4.0.1'
     } else {
-        compile('com.github.reportportal:commons:71d4aca')
+        compile('com.github.reportportal:commons:5a5ea6b')
         compile 'com.github.reportportal:commons-rules:spb2-SNAPSHOT'
         compile 'com.github.reportportal:commons-model:c6c483b'
     }

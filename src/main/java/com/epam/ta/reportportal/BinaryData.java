@@ -21,11 +21,6 @@
 
 package com.epam.ta.reportportal;
 
-import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.ws.model.ErrorType;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -36,48 +31,20 @@ import java.io.InputStream;
  */
 public class BinaryData {
 
-	/**
-	 * MIME Type of Binary Data
-	 */
-	private final String contentType;
+	private InputStream inputStream;
+	private String filename;
 
-	/**
-	 * Data Stream
-	 */
-	private final InputStream inputStream;
-
-	/**
-	 * Content length
-	 */
-	private Long length;
-
-	public BinaryData(String contentType, Long length, InputStream inputStream) {
-		this.contentType = contentType;
-		this.length = length;
+	public BinaryData(InputStream inputStream, String filename) {
 		this.inputStream = inputStream;
-	}
-
-	public BinaryData(MultipartFile multipartFile) {
-		this.contentType = multipartFile.getContentType();
-		this.length = multipartFile.getSize();
-
-		try {
-			this.inputStream = multipartFile.getInputStream();
-		} catch (IOException e) {
-			throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to create binary data from multipart file");
-		}
-	}
-
-	public String getContentType() {
-		return contentType;
+		this.filename = filename;
 	}
 
 	public InputStream getInputStream() {
 		return inputStream;
 	}
 
-	public Long getLength() {
-		return length;
+	public String getFilename() {
+		return filename;
 	}
 
 }

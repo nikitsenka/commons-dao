@@ -1,20 +1,21 @@
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.BinaryData;
 import com.epam.ta.reportportal.entity.user.User;
+
+import java.io.InputStream;
 
 /**
  * @author Pavel Bortnik
  */
 public interface UserRepositoryCustom {
 
-	String uploadUserPhoto(String login, BinaryData binaryData);
+	String uploadUserPhoto(String login, InputStream binaryData);
 
-	String replaceUserPhoto(String login, BinaryData binaryData);
+	String replaceUserPhoto(String login, InputStream binaryData);
 
-	String replaceUserPhoto(User user, BinaryData binaryData);
+	String replaceUserPhoto(User user, InputStream binaryData);
 
-	BinaryData findUserPhoto(User user);
+	InputStream findUserPhoto(User user);
 
 	void deleteUserPhoto(User user);
 

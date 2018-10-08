@@ -72,14 +72,14 @@ public class DataStoreService {
 
 		try {
 
-			BinaryData binaryData = getBinaryData(file);
+			String contentType = getContentType(file);
 
 			String generatedFilePath = filePathGenerator.generate();
 			String commonPath = Paths.get(projectId.toString(), generatedFilePath).toString();
 			Path targetPath = Paths.get(commonPath, file.getOriginalFilename());
 
 			String thumbnailFilePath = null;
-			if (isImage(binaryData.getContentType())) {
+			if (isImage(contentType)) {
 
 				try {
 
@@ -97,7 +97,7 @@ public class DataStoreService {
 			/*
 			 * Saves binary data into storage
 			 */
-			String filePath = dataStore.save(targetPath.toString(), binaryData.getInputStream());
+			String filePath = dataStore.save(targetPath.toString(), file.getInputStream());
 
 			maybeResult = Optional.of(BinaryDataMetaInfo.BinaryDataMetaInfoBuilder.aBinaryDataMetaInfo()
 					.withFileId(dataEncoder.encode(filePath))
@@ -115,9 +115,9 @@ public class DataStoreService {
 		return maybeResult;
 	}
 
-	public InputStream load(String fileId) {
-
-		return dataStore.load(dataEncoder.decode(fileId));
+	public BinaryData load(String fileId) {
+		String filename = dataEncoder.decode(fileId);
+		return new BinaryData(dataStore.load(filename), filename);
 	}
 
 	public void delete(String filePath) {
@@ -125,23 +125,19 @@ public class DataStoreService {
 		dataStore.delete(dataEncoder.decode(filePath));
 	}
 
-	private BinaryData getBinaryData(MultipartFile file) throws IOException {
+	private String getContentType(MultipartFile file) throws IOException {
 
-		BinaryData binaryData;
 		boolean isContentTypePresented =
 				!Strings.isNullOrEmpty(file.getContentType()) && !MediaType.APPLICATION_OCTET_STREAM_VALUE.equals(file.getContentType());
 		if (isContentTypePresented) {
-			binaryData = new BinaryData(file.getContentType(), file.getSize(), file.getInputStream());
+			return file.getContentType();
 		} else {
-			binaryData = new BinaryData(contentTypeResolver.detectContentType(file.getInputStream()),
-					file.getSize(),
-					file.getInputStream()
-			);
+			return contentTypeResolver.detectContentType(file.getInputStream());
 		}
-		return binaryData;
 	}
 
 	private boolean isImage(String contentType) {
 		return contentType != null && contentType.contains("image");
 	}
+
 }
