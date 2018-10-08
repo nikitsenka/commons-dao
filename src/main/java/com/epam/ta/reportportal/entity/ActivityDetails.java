@@ -13,7 +13,13 @@ public class ActivityDetails extends JsonbObject {
 	public ActivityDetails() {
 	}
 
-	public ActivityDetails(ArrayList<HistoryField> history) {
+	public ActivityDetails(Long objectId, String objectName) {
+		this.objectId = objectId;
+		this.objectName = objectName;
+	}
+
+	public ActivityDetails(Long objectId, String objectName, ArrayList<HistoryField> history) {
+		this(objectId, objectName);
 		this.history = history;
 	}
 
@@ -39,5 +45,9 @@ public class ActivityDetails extends JsonbObject {
 
 	public void setObjectName(String objectName) {
 		this.objectName = objectName;
+	}
+
+	public void addHistoryField(HistoryField historyField) {
+		history.add(historyField);
 	}
 }

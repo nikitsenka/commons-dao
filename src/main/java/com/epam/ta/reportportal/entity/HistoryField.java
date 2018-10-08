@@ -9,7 +9,7 @@ public class HistoryField implements Serializable {
 	private String oldValue;
 	private String newValue;
 
-	public HistoryField(String field, String oldValue, String newValue) {
+	private HistoryField(String field, String oldValue, String newValue) {
 		this.field = field;
 		this.oldValue = oldValue;
 		this.newValue = newValue;
@@ -45,5 +45,9 @@ public class HistoryField implements Serializable {
 	@JsonIgnore
 	public boolean isEmpty() {
 		return null == oldValue || null == newValue;
+	}
+
+	public static HistoryField of(String field, String oldValue, String newValue) {
+		return new HistoryField(field, oldValue, newValue);
 	}
 }
