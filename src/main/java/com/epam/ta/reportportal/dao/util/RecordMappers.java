@@ -28,8 +28,6 @@ import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.entity.user.User;
-import com.epam.ta.reportportal.entity.user.UserRole;
-import com.epam.ta.reportportal.entity.user.UserType;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,11 +48,9 @@ import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.LAUNCH_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.PARENT_ID;
-import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE;
 import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
-import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -147,53 +143,8 @@ public class RecordMappers {
 			.values());
 
 	/**
-	 * Maps record into {@link User} object
+	 * Maps record into {@link Activity} object
 	 */
-	public static final RecordMapper<? super Record, User> USER_RECORD_MAPPER = r -> {
-		User user = new User();
-		Project defaultProject = new Project();
-		String metaDataString = r.get(fieldName(USERS.METADATA), String.class);
-		ofNullable(metaDataString).ifPresent(md -> {
-			try {
-				JsonbObject metaData = objectMapper.readValue(metaDataString, JsonbObject.class);
-				user.setMetadata(metaData);
-			} catch (IOException e) {
-				throw new ReportPortalException("Error during parsing user metadata");
-			}
-		});
-
-		r = r.into(USERS.fields());
-		defaultProject.setId(r.get(USERS.DEFAULT_PROJECT_ID));
-		user.setId(r.get(USERS.ID));
-		user.setAttachment(r.get(USERS.ATTACHMENT));
-		user.setAttachmentThumbnail(r.get(USERS.ATTACHMENT_THUMBNAIL));
-		user.setDefaultProject(defaultProject);
-		user.setEmail(r.get(USERS.EMAIL));
-		user.setExpired(r.get(USERS.EXPIRED));
-		user.setFullName(r.get(USERS.FULL_NAME));
-		user.setLogin(r.get(USERS.LOGIN));
-		user.setPassword(r.get(USERS.PASSWORD));
-		user.setRole(UserRole.findByName(r.get(USERS.ROLE)).orElseThrow(() -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND)));
-		user.setUserType(UserType.findByName(r.get(USERS.TYPE))
-				.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_AUTHENTICATION_TYPE)));
-		return user;
-	};
-
-	/**
-	 * Maps result of records without crosstab into list of {@link User}
-	 */
-	public static final Function<Result<? extends Record>, List<User>> USER_FETCHER = result -> {
-		Map<Long, User> userMap = Maps.newHashMap();
-		result.forEach(res -> {
-			Long userId = res.get(USERS.ID);
-			if (!userMap.containsKey(userId)) {
-				userMap.put(userId, USER_RECORD_MAPPER.map(res));
-			}
-		});
-
-		return Lists.newArrayList(userMap.values());
-	};
-
 	public static final RecordMapper<? super Record, Activity> ACTIVITY_MAPPER = r -> {
 		Activity activity = new Activity();
 		activity.setId(r.get(ACTIVITY.ID));
@@ -213,6 +164,10 @@ public class RecordMappers {
 		});
 		return activity;
 	};
+
+	/**
+	 * Maps result of records without crosstab into list of {@link User}
+	 */
 	public static final Function<Result<? extends Record>, List<Activity>> ACTIVITY_FETCHER = r -> {
 		Map<Long, Activity> activityMap = Maps.newHashMap();
 		r.forEach(res -> {
