@@ -11,10 +11,7 @@ import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.jooq.RecordMapper;
-import org.jooq.Result;
+import org.jooq.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -83,6 +81,11 @@ public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
 		Sort sort = new Sort(Sort.Direction.DESC, "creation_date");
 		//		FilterCondition testItemIdCondition = FilterCondition.builder().eq("").build()
 
+		SelectQuery<? extends Record> build = QueryBuilder.newBuilder(filter).with(sort).with(pageable).build();
+		build.addConditions();
+		build.getSQL().concat("")
+
+
 		return null;
 	}
 
@@ -99,13 +102,12 @@ public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
 	@Override
 	public void deleteModifiedLaterAgo(Long projectId, Duration period) {
 		LocalDateTime bound = LocalDateTime.now().minus(period);
-		FilterCondition.builder().withCondition(Condition.LOWER_THAN).withSearchCriteria("creation_date").withValue(bound.toString());
-
+		dsl.delete(ACTIVITY).where(ACTIVITY.PROJECT_ID.eq(projectId)).and(ACTIVITY.CREATION_DATE.lt(Timestamp.valueOf(bound))).execute();
 	}
 
 	@Override
 	public List<Activity> findByFilterWithSortingAndLimit(Filter filter, Sort sort, int limit) {
-		return null;
+		return ACTIVITY_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter).with(sort).with(limit).build()));
 	}
 
 	@Override

@@ -2,7 +2,6 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
-import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.config.TestConfiguration;
 import com.epam.ta.reportportal.entity.Activity;
 import com.epam.ta.reportportal.entity.ActivityDetails;
@@ -13,18 +12,20 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = TestConfiguration.class)
@@ -60,6 +61,26 @@ public class ActivityRepositoryCustomImplTest {
 		activities.forEach(a -> assertEquals(Long.valueOf(1L), a.getProjectId()));
 	}
 
+	@Test
+	public void deleteModifiedLaterAgoTest() {
+		Duration period = Duration.ofDays(10);
+		LocalDateTime bound = LocalDateTime.now().minus(period);
+
+		repository.deleteModifiedLaterAgo(1L, period);
+		List<Activity> all = repository.findAll();
+		all.forEach(a -> assertTrue(a.getCreatedAt().isAfter(bound)));
+	}
+
+	@Test
+	public void findByFilterWithSortingAndLimitTest() {
+		List<Activity> activities = repository.findByFilterWithSortingAndLimit(defaultFilter(),
+				new Sort(Sort.Direction.DESC, "creation_date"),
+				2
+		);
+		assertEquals(2, activities.size());
+		activities.forEach(a -> assertTrue(a.getCreatedAt().toLocalDate().isEqual(LocalDate.of(2018, 10, 5))));
+	}
+
 	@Rollback(false)
 	@Test
 	public void test() {
@@ -85,20 +106,10 @@ public class ActivityRepositoryCustomImplTest {
 	}
 
 	private Filter filterGetById(long id) {
-		return Filter.builder()
-				.withCondition(new FilterCondition(Condition.EQUALS, false, String.valueOf(id), "id"))
-				.withTarget(Activity.class)
-				.build();
+		return new Filter(Activity.class, Condition.EQUALS, false, String.valueOf(id), "id");
 	}
 
 	private Filter defaultFilter() {
-		return Filter.builder()
-				.withCondition(FilterCondition.builder()
-						.withCondition(Condition.LOWER_THAN)
-						.withSearchCriteria("id")
-						.withValue("100")
-						.build())
-				.withTarget(Activity.class)
-				.build();
+		return new Filter(Activity.class, Condition.LOWER_THAN, false, "100", "id");
 	}
 }
