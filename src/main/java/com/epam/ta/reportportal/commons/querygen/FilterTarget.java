@@ -128,7 +128,7 @@ public enum FilterTarget {
 			JActivity a = JActivity.ACTIVITY.as("a");
 			JUsers u = JUsers.USERS.as("u");
 			JProject p = JProject.PROJECT.as("p");
-			return DSL.select(a.ID, a.PROJECT_ID, a.USER_ID, a.ENTITY, a.ACTION, a.CREATION_DATE, a.DETAILS, u.LOGIN, p.NAME)
+			return DSL.select(a.ID, a.PROJECT_ID, a.USER_ID, a.ENTITY, a.ACTION, a.CREATION_DATE, a.DETAILS, a.OBJECT_ID, u.LOGIN, p.NAME)
 					.from(a)
 					.join(u)
 					.on(a.USER_ID.eq(u.ID))

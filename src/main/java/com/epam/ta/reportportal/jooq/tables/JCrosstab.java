@@ -25,7 +25,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JCrosstab extends TableImpl<JCrosstabRecord> {
 
-    private static final long serialVersionUID = 1476588677;
+	private static final long serialVersionUID = -123498386;
 
     /**
      * The reference instance of <code>public.crosstab</code>
@@ -67,7 +67,7 @@ public class JCrosstab extends TableImpl<JCrosstabRecord> {
     }
 
     private JCrosstab(Name alias, Table<JCrosstabRecord> aliased) {
-        this(alias, aliased, new Field[1]);
+		this(alias, aliased, new Field[2]);
     }
 
     private JCrosstab(Name alias, Table<JCrosstabRecord> aliased, Field<?>[] parameters) {
@@ -121,18 +121,19 @@ public class JCrosstab extends TableImpl<JCrosstabRecord> {
     /**
      * Call this table-valued function
      */
-    public JCrosstab call(String __1) {
-        return new JCrosstab(DSL.name(getName()), null, new Field[] { 
-              DSL.val(__1, org.jooq.impl.SQLDataType.CLOB)
+	public JCrosstab call(String __1, Integer __2) {
+		return new JCrosstab(
+				DSL.name(getName()),
+				null,
+				new Field[] { DSL.val(__1, org.jooq.impl.SQLDataType.CLOB), DSL.val(__2, org.jooq.impl.SQLDataType.INTEGER)
         });
     }
 
     /**
      * Call this table-valued function
      */
-    public JCrosstab call(Field<String> __1) {
-        return new JCrosstab(DSL.name(getName()), null, new Field[] { 
-              __1
+	public JCrosstab call(Field<String> __1, Field<Integer> __2) {
+		return new JCrosstab(DSL.name(getName()), null, new Field[] { __1, __2
         });
     }
 }

@@ -89,22 +89,22 @@ public class Tables {
     /**
      * Call <code>public.crosstab</code>.
      */
-    public static Result<JCrosstabRecord> CROSSTAB(Configuration configuration, String __1) {
-        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1)).fetch();
+    public static Result<JCrosstabRecord> CROSSTAB(Configuration configuration, String __1, Integer __2) {
+        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2)).fetch();
     }
 
     /**
      * Get <code>public.crosstab</code> as a table.
      */
-    public static JCrosstab CROSSTAB(String __1) {
-        return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1);
+    public static JCrosstab CROSSTAB(String __1, Integer __2) {
+        return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2);
     }
 
     /**
      * Get <code>public.crosstab</code> as a table.
      */
-    public static JCrosstab CROSSTAB(Field<String> __1) {
-        return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1);
+    public static JCrosstab CROSSTAB(Field<String> __1, Field<Integer> __2) {
+        return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2);
     }
 
     /**
@@ -395,11 +395,6 @@ public class Tables {
      * The table <code>public.ticket</code>.
      */
     public static final JTicket TICKET = com.epam.ta.reportportal.jooq.tables.JTicket.TICKET;
-
-	/**
-	 * The table <code>public.user_config</code>.
-	 */
-	public static final JUserConfig USER_CONFIG = com.epam.ta.reportportal.jooq.tables.JUserConfig.USER_CONFIG;
 
     /**
      * The table <code>public.user_filter</code>.

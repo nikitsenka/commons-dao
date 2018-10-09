@@ -30,7 +30,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-	private static final long serialVersionUID = -164712201;
+	private static final long serialVersionUID = -1825271099;
 
     /**
      * The reference instance of <code>public</code>
@@ -101,22 +101,22 @@ public class JPublic extends SchemaImpl {
     /**
      * Call <code>public.crosstab</code>.
      */
-    public static Result<JCrosstabRecord> CROSSTAB(Configuration configuration, String __1) {
-        return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1)).fetch();
+	public static Result<JCrosstabRecord> CROSSTAB(Configuration configuration, String __1, Integer __2) {
+		return configuration.dsl().selectFrom(com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2)).fetch();
     }
 
     /**
      * Get <code>public.crosstab</code> as a table.
      */
-    public static JCrosstab CROSSTAB(String __1) {
-        return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1);
+	public static JCrosstab CROSSTAB(String __1, Integer __2) {
+		return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2);
     }
 
     /**
      * Get <code>public.crosstab</code> as a table.
      */
-    public static JCrosstab CROSSTAB(Field<String> __1) {
-        return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1);
+	public static JCrosstab CROSSTAB(Field<String> __1, Field<Integer> __2) {
+		return com.epam.ta.reportportal.jooq.tables.JCrosstab.CROSSTAB.call(__1, __2);
     }
 
     /**
@@ -408,11 +408,6 @@ public class JPublic extends SchemaImpl {
      */
     public final JTicket TICKET = com.epam.ta.reportportal.jooq.tables.JTicket.TICKET;
 
-	/**
-	 * The table <code>public.user_config</code>.
-	 */
-	public final JUserConfig USER_CONFIG = com.epam.ta.reportportal.jooq.tables.JUserConfig.USER_CONFIG;
-
     /**
      * The table <code>public.user_filter</code>.
      */
@@ -489,8 +484,10 @@ public class JPublic extends SchemaImpl {
             Sequences.PROJECT_ATTRIBUTE_ATTRIBUTE_ID_SEQ,
             Sequences.PROJECT_ATTRIBUTE_PROJECT_ID_SEQ,
             Sequences.PROJECT_ID_SEQ,
-            Sequences.SERVER_SETTINGS_ID_SEQ,
-            Sequences.STATISTICS_S_ID_SEQ, Sequences.TEST_ITEM_ITEM_ID_SEQ, Sequences.TICKET_ID_SEQ, Sequences.USER_CONFIG_ID_SEQ,
+				Sequences.SERVER_SETTINGS_ID_SEQ,
+				Sequences.STATISTICS_S_ID_SEQ,
+				Sequences.TEST_ITEM_ITEM_ID_SEQ,
+				Sequences.TICKET_ID_SEQ,
             Sequences.USERS_ID_SEQ,
             Sequences.WIDGET_ID_SEQ,
             Sequences.WIDGET_OPTION_ID_SEQ);
@@ -550,8 +547,10 @@ public class JPublic extends SchemaImpl {
             JProjectUser.PROJECT_USER,
             JRecipients.RECIPIENTS,
             JServerSettings.SERVER_SETTINGS,
-            JStatistics.STATISTICS,
-            JTestItem.TEST_ITEM, JTestItemResults.TEST_ITEM_RESULTS, JTicket.TICKET, JUserConfig.USER_CONFIG,
+				JStatistics.STATISTICS,
+				JTestItem.TEST_ITEM,
+				JTestItemResults.TEST_ITEM_RESULTS,
+				JTicket.TICKET,
             JUserFilter.USER_FILTER,
             JUsers.USERS,
             JWidget.WIDGET,

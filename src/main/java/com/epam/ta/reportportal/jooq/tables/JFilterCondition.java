@@ -30,7 +30,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JFilterCondition extends TableImpl<JFilterConditionRecord> {
 
-	private static final long serialVersionUID = -1733543543;
+	private static final long serialVersionUID = 618341509;
 
     /**
      * The reference instance of <code>public.filter_condition</code>
@@ -66,9 +66,10 @@ public class JFilterCondition extends TableImpl<JFilterConditionRecord> {
     public final TableField<JFilterConditionRecord, String> VALUE = createField("value", org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
-	 * The column <code>public.filter_condition.field</code>.
+	 * The column <code>public.filter_condition.search_criteria</code>.
      */
-	public final TableField<JFilterConditionRecord, String> FIELD = createField("field",
+	public final TableField<JFilterConditionRecord, String> SEARCH_CRITERIA = createField(
+			"search_criteria",
 			org.jooq.impl.SQLDataType.VARCHAR.nullable(false),
 			this,
 			""

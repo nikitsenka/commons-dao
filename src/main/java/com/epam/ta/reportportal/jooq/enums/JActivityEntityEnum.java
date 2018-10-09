@@ -34,8 +34,6 @@ public enum JActivityEntityEnum implements EnumType {
 
 	EMAIL_CONFIG("EMAIL_CONFIG"),
 
-	EXTERNAL_SYSTEM("EXTERNAL_SYSTEM"),
-
 	FILTER("FILTER"),
 
 	IMPORT("IMPORT"),

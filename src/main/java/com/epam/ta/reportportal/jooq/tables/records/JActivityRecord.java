@@ -449,7 +449,8 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord>
 	 * {@inheritDoc}
 	 */
 	@Override
-	public JActivityRecord values(Long value1, Long value2, Long value3, JActivityEntityEnum value4, String value5, Object value6, Timestamp value7, Long value8) {
+	public JActivityRecord values(Long value1, Long value2, Long value3, JActivityEntityEnum value4, String value5, Object value6,
+			Timestamp value7, Long value8) {
         value1(value1);
         value2(value2);
         value3(value3);
@@ -475,7 +476,8 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord>
     /**
      * Create a detached, initialised JActivityRecord
 	 */
-	public JActivityRecord(Long id, Long userId, Long projectId, JActivityEntityEnum entity, String action, Object details, Timestamp creationDate, Long objectId) {
+	public JActivityRecord(Long id, Long userId, Long projectId, JActivityEntityEnum entity, String action, Object details,
+			Timestamp creationDate, Long objectId) {
         super(JActivity.ACTIVITY);
 
         set(0, id);
