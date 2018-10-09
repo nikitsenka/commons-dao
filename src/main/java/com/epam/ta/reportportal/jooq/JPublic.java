@@ -30,7 +30,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-    private static final long serialVersionUID = -1198742209;
+	private static final long serialVersionUID = -164712201;
 
     /**
      * The reference instance of <code>public</code>
@@ -408,6 +408,11 @@ public class JPublic extends SchemaImpl {
      */
     public final JTicket TICKET = com.epam.ta.reportportal.jooq.tables.JTicket.TICKET;
 
+	/**
+	 * The table <code>public.user_config</code>.
+	 */
+	public final JUserConfig USER_CONFIG = com.epam.ta.reportportal.jooq.tables.JUserConfig.USER_CONFIG;
+
     /**
      * The table <code>public.user_filter</code>.
      */
@@ -485,9 +490,7 @@ public class JPublic extends SchemaImpl {
             Sequences.PROJECT_ATTRIBUTE_PROJECT_ID_SEQ,
             Sequences.PROJECT_ID_SEQ,
             Sequences.SERVER_SETTINGS_ID_SEQ,
-            Sequences.STATISTICS_S_ID_SEQ,
-            Sequences.TEST_ITEM_ITEM_ID_SEQ,
-            Sequences.TICKET_ID_SEQ,
+            Sequences.STATISTICS_S_ID_SEQ, Sequences.TEST_ITEM_ITEM_ID_SEQ, Sequences.TICKET_ID_SEQ, Sequences.USER_CONFIG_ID_SEQ,
             Sequences.USERS_ID_SEQ,
             Sequences.WIDGET_ID_SEQ,
             Sequences.WIDGET_OPTION_ID_SEQ);
@@ -548,9 +551,7 @@ public class JPublic extends SchemaImpl {
             JRecipients.RECIPIENTS,
             JServerSettings.SERVER_SETTINGS,
             JStatistics.STATISTICS,
-            JTestItem.TEST_ITEM,
-            JTestItemResults.TEST_ITEM_RESULTS,
-            JTicket.TICKET,
+            JTestItem.TEST_ITEM, JTestItemResults.TEST_ITEM_RESULTS, JTicket.TICKET, JUserConfig.USER_CONFIG,
             JUserFilter.USER_FILTER,
             JUsers.USERS,
             JWidget.WIDGET,

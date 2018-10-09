@@ -27,7 +27,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JFilterConditionRecord extends UpdatableRecordImpl<JFilterConditionRecord> implements Record6<Long, Long, JFilterConditionEnum, String, String, Boolean> {
 
-    private static final long serialVersionUID = 1427622906;
+	private static final long serialVersionUID = 1740593621;
 
     /**
      * Setter for <code>public.filter_condition.id</code>.
@@ -86,16 +86,16 @@ public class JFilterConditionRecord extends UpdatableRecordImpl<JFilterCondition
     }
 
     /**
-     * Setter for <code>public.filter_condition.search_criteria</code>.
+	 * Setter for <code>public.filter_condition.field</code>.
      */
-    public void setSearchCriteria(String value) {
+	public void setField(String value) {
         set(4, value);
     }
 
     /**
-     * Getter for <code>public.filter_condition.search_criteria</code>.
+	 * Getter for <code>public.filter_condition.field</code>.
      */
-    public String getSearchCriteria() {
+	public String getField() {
         return (String) get(4);
     }
 
@@ -182,7 +182,7 @@ public class JFilterConditionRecord extends UpdatableRecordImpl<JFilterCondition
      */
     @Override
     public Field<String> field5() {
-        return JFilterCondition.FILTER_CONDITION.SEARCH_CRITERIA;
+		return JFilterCondition.FILTER_CONDITION.FIELD;
     }
 
     /**
@@ -230,7 +230,7 @@ public class JFilterConditionRecord extends UpdatableRecordImpl<JFilterCondition
      */
     @Override
     public String component5() {
-        return getSearchCriteria();
+		return getField();
     }
 
     /**
@@ -278,7 +278,7 @@ public class JFilterConditionRecord extends UpdatableRecordImpl<JFilterCondition
      */
     @Override
     public String value5() {
-        return getSearchCriteria();
+		return getField();
     }
 
     /**
@@ -330,7 +330,7 @@ public class JFilterConditionRecord extends UpdatableRecordImpl<JFilterCondition
      */
     @Override
     public JFilterConditionRecord value5(String value) {
-        setSearchCriteria(value);
+		setField(value);
         return this;
     }
 
@@ -371,14 +371,14 @@ public class JFilterConditionRecord extends UpdatableRecordImpl<JFilterCondition
     /**
      * Create a detached, initialised JFilterConditionRecord
      */
-    public JFilterConditionRecord(Long id, Long filterId, JFilterConditionEnum condition, String value, String searchCriteria, Boolean negative) {
+	public JFilterConditionRecord(Long id, Long filterId, JFilterConditionEnum condition, String value, String field, Boolean negative) {
         super(JFilterCondition.FILTER_CONDITION);
 
         set(0, id);
         set(1, filterId);
         set(2, condition);
         set(3, value);
-        set(4, searchCriteria);
+		set(4, field);
         set(5, negative);
     }
 }
